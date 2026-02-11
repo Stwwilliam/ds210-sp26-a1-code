@@ -14,12 +14,10 @@ pub struct RandomStrategy {}
 // Terrible strategy: ask if the number is min, otherwise return max.
 impl Strategy for BadStrategy {
     fn guess_the_number(player: &mut Player, min: u32, max: u32) -> u32 {
-        loop {
-            if player.ask_if_equal(min) {
-                return min;
-            } else {
-                return max - 1;
-            }
+        if player.ask_if_equal(min) {
+            return min;
+        } else {
+            return max - 1;
         }
     }
 }
