@@ -4,7 +4,7 @@ use crate::part3::SimulatedPlayer;
 use crate::player::Player;
 use crate::strategies::{Strategy, RandomStrategy};
 
-use plotters::prelude::*;
+use plgitotters::prelude::*;
 use plotters::style::full_palette::ORANGE;
 
 mod part1;
