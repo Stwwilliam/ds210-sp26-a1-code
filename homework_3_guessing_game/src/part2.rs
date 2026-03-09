@@ -35,5 +35,9 @@ impl Strategy for Part2 {
             Self::guess_the_number(player, min, min+(max-min)/2)
         }
         }        
+<<<<<<< HEAD
 >>>>>>> 9565db42d02bb4ea27ae00c1a4a8d625a800b2b4
+=======
+>>>>>>> 9531b82c64d23bd7fcc41c726bb297969aa3797f
+>>>>>>> 7b9378b404b4fced43a6271579aeff551bc3a7bb
 }
