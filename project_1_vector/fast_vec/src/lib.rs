@@ -132,7 +132,6 @@ impl<T> FastVec<T> {
         self.len = 0;
         self.capacity = 0;
     }
-
 }
 
 // Destructor should clear the fast_vec to avoid leaking memory.
