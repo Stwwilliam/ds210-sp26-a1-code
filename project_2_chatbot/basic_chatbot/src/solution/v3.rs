@@ -28,11 +28,14 @@ impl ChatbotV3 {
         // Notice, you are given both the `message` and also the `username`.
         // Use this information to select the correct chat session for that user and keep it
         // separated from the sessions of other users.
-        if !self.chat_session.contains_key(&username){
+        match self.chat_session.get(&username){
+            Some(_)=> {}
+            None => {
             let mut chat_session: Chat<Llama> = self.model
                 .chat()
                 .with_system_prompt("The assistant will act like a pirate");
-            self.chat_session.insert(username.clone(), chat_session);
+                self.chat_session.insert(username.clone(), chat_session);
+            }
         }
 
         let chat_session = self.chat_session.get_mut(&username).unwrap();
