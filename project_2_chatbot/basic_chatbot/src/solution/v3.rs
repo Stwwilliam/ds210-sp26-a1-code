@@ -33,7 +33,7 @@ impl ChatbotV3 {
         match self.user_and_chat_session.get(&username){
             Some(_)=> {}
             None => {
-            let mut user_and_chat_session: Chat<Llama> = self.model
+            let user_and_chat_session: Chat<Llama> = self.model
                 .chat()
                 .with_system_prompt("The assistant will act like a pirate");
                 self.user_and_chat_session.insert(username.clone(), user_and_chat_session);
