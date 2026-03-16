@@ -31,7 +31,7 @@ impl ChatbotV3 {
         // Use this information to select the correct chat session for that user and keep it
         // separated from the sessions of other users.
         match self.user_and_chat_session.get(&username){
-            Some(_)=> {}
+            Some(_)=> {},
             None => {
             let user_and_chat_session: Chat<Llama> = self.model
                 .chat()
