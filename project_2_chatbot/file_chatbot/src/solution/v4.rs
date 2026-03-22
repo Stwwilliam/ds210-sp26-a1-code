@@ -12,6 +12,7 @@ impl ChatbotV4 {
         };
     }
 
+    // student 1
     pub async fn chat_with_user(&mut self, username: String, message: String) -> String {
         let filename = &format!("{}.txt", username);
 
@@ -27,6 +28,7 @@ impl ChatbotV4 {
         return String::from("Hello, I am not a bot (yet)!");
     }
 
+    // student 2
     pub fn get_history(&self, username: String) -> Vec<String> {
         let filename = &format!("{}.txt", username);
 
