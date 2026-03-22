@@ -10,15 +10,28 @@ use std::fs;
 // Look at https://docs.rs/kalosm/latest/kalosm/language/trait.ChatSession.html#saving-and-loading-sessions
 // for some examples!
 
-// Implement this
+// Implement this student 1
 pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
     // look at fs::write(...)
     unimplemented!("Saving chat session to file {filename}");
 }
 
-// Implement this
+// Implement this student 2
 pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
     // look at fs::read(...)
     // also look at LlamaChatSession::from_bytes(...)
-    unimplemented!("Loading chat session from file {filename}");
+    // unimplemented!("Loading chat session from file {filename}");
+
+    let session_as_bytes = fs::read(filename);
+    
+    // Load the session from bytes
+    match session_as_bytes {
+        Err(why) => {
+            panic!("{:?}", why);
+        },
+        Ok(x) => {
+            let session = LlamaChatSession::from_bytes(&x).unwrap();
+            return Some(session);
+        }
+    }
 }

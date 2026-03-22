@@ -12,6 +12,7 @@ impl ChatbotV4 {
         };
     }
 
+    // student 1
     pub async fn chat_with_user(&mut self, username: String, message: String) -> String {
         let filename = &format!("{}.txt", username);
 
@@ -27,6 +28,7 @@ impl ChatbotV4 {
         return String::from("Hello, I am not a bot (yet)!");
     }
 
+    // student 2
     pub fn get_history(&self, username: String) -> Vec<String> {
         let filename = &format!("{}.txt", username);
 
@@ -36,7 +38,16 @@ impl ChatbotV4 {
             },
             Some(session) => {
                 // TODO: what should happen here?
-                return Vec::new();
+
+                let history = session.history();
+                let mut output = Vec::new();
+                for i in 1..history.len() {
+                    output.push(history[i].content().to_string());
+                }
+
+                return output;
+
+                // return Vec::new();
             }
         }
     }
