@@ -22,16 +22,9 @@ pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
     // also look at LlamaChatSession::from_bytes(...)
     // unimplemented!("Loading chat session from file {filename}");
 
-    let session_as_bytes = fs::read(filename);
+    let session_as_bytes = fs::read(filename).unwrap();
     
     // Load the session from bytes
-    match session_as_bytes {
-        Err(why) => {
-            panic!("{:?}", why);
-        },
-        Ok(x) => {
-            let session = LlamaChatSession::from_bytes(&x).unwrap();
-            return Some(session);
-        }
-    }
+    let session = LlamaChatSession::from_bytes(&session_as_bytes).unwrap();
+    return Some(session);
 }

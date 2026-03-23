@@ -40,10 +40,23 @@ impl ChatbotV4 {
                 // TODO: what should happen here?
 
                 let history = session.history();
-                let mut output = Vec::new();
-                for i in 1..history.len() {
-                    output.push(history[i].content().to_string());
-                }
+                let output = 
+
+                    history.iter().filter_map(
+                        |message| {
+                            match message.role() {
+                                MessageType::UserMessage => {
+                                    Some(message.content().to_string())
+                                },
+                                MessageType::ModelAnswer => {
+                                    Some(message.content().to_string())
+                                },
+                                MessageType::SystemPrompt => {
+                                    None
+                                }
+                            }
+                        }
+                    ).collect();
 
                 return output;
 
