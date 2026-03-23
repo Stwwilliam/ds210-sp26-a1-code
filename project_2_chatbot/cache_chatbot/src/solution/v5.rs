@@ -16,6 +16,7 @@ impl ChatbotV5 {
         };
     }
 
+    // student 2
     pub async fn chat_with_user(&mut self, username: String, message: String) -> String {
         let filename = &format!("{}.txt", username);
         let cached_chat = self.cache.get_chat(&username);
@@ -35,6 +36,7 @@ impl ChatbotV5 {
         }
     }
 
+    // student 1
     pub fn get_history(&mut self, username: String) -> Vec<String> {
         let filename = &format!("{}.txt", username);
         let cached_chat = self.cache.get_chat(&username);
