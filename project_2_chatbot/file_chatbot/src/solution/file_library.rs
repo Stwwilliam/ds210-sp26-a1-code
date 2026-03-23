@@ -13,7 +13,6 @@ use std::fs;
 // Implement this student 1
 pub fn save_chat_session_to_file(filename: &str, session: &LlamaChatSession) {
     // look at fs::write(...)
-    unimplemented!("Saving chat session to file {filename}");
 }
 
 // Implement this student 2
@@ -22,9 +21,16 @@ pub fn load_chat_session_from_file(filename: &str) -> Option<LlamaChatSession> {
     // also look at LlamaChatSession::from_bytes(...)
     // unimplemented!("Loading chat session from file {filename}");
 
-    let session_as_bytes = fs::read(filename).unwrap();
+    let session_as_bytes = fs::read(filename);
     
     // Load the session from bytes
-    let session = LlamaChatSession::from_bytes(&session_as_bytes).unwrap();
-    return Some(session);
+    match session_as_bytes {
+        Err(_) => {
+            None
+        },
+        Ok(x) => {
+            let session = LlamaChatSession::from_bytes(&x).unwrap();
+            return Some(session);
+        }
+    }
 }
