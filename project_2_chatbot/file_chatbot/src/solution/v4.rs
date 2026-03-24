@@ -15,7 +15,11 @@ impl ChatbotV4 {
     // student 1
     pub async fn chat_with_user(&mut self, username: String, message: String) -> String {
         let filename = &format!("{}.txt", username);
-        let mut chat_session: Chat<Llama>;
+
+        let mut chat_session: Chat<Llama> = self.model
+            .chat()
+            .with_system_prompt("The assistant will act like a pirate");
+
         // TODO: You have to implement the rest:
         // You need to load the chat session from the file using file_library::load_chat_session_from_file(...).
         // Think about what needs to happen if the function returns None vs Some(session).
@@ -23,12 +27,10 @@ impl ChatbotV4 {
         let loaded = file_library::load_chat_session_from_file(filename);
         match loaded {
             Some(session) => {
-                chat_session = self.model.chat().with_session(session);
+                chat_session = chat_session.with_session(session);
             }
             None => {  
-                chat_session = self.model
-                    .chat()
-                    .with_system_prompt("The assistant will act like a pirate");
+
             }      
         }
         let response = chat_session(&message).await.unwrap();
