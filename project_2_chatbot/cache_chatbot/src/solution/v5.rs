@@ -59,15 +59,28 @@ impl ChatbotV5 {
                 println!("get_history: {username} is not in the cache!");
                 // TODO: The cache does not have the chat. What should you do?
                 // Your code goes here.
+                let mut chat_session = self.model
+                    .chat()
+                    .with_system_prompt("The assistant will act like a pirate");
+                self.cache.insert_chat(username.clone(), chat_session);
                 return Vec::new();
             }
             Some(chat_session) => {
                 println!("get_history: {username} is in the cache! Nice!");
                 // TODO: The cache has this chat. What should you do?
                 // Your code goes here.
-                return Vec::new();
+                let history = chat_session.session().unwrap().history();
+                let output: Vec<String> = history.iter().filter_map(|message| {
+                    match message.role() {
+                        MessageType::UserMessage => Some(message.content().to_string()),
+                        MessageType::ModelAnswer => Some(message.content().to_string()),
+                        MessageType::SystemPrompt => None,
+                    }
+                }).collect();
 
+                return output;
             }
         }
     }
 }
+
