@@ -54,10 +54,9 @@ impl ChatbotV5 {
         let filename = &format!("{}.txt", username);
         let cached_chat = self.cache.get_chat(&username);
 
-        let chat_session = match cached_chat {
+        match cached_chat {
             None => {
                 println!("get_history: {username} is not in the cache!");
-<<<<<<< HEAD
                 // TODO: The cache does not have the chat. What should you do?
                 // Your code goes here.
                 let mut chat_session = match file_library::load_chat_session_from_file(&filename) {
@@ -78,29 +77,21 @@ impl ChatbotV5 {
                 return output;
             }
             Some(chat_session) => {
-=======
-                match file_library::load_chat_session_from_file(&filename) {
-                    Some(session) => Chat::new(self.model.clone()).with_session(session),
-                    None => Chat::new(self.model.clone())
-                        .with_system_prompt("The assistant will act like a pirate"),
-                }
-            },
-            Some(session) => {
->>>>>>> 6dc3e77017d88545f7095884fb5a4a29b578b919
                 println!("get_history: {username} is in the cache! Nice!");
-                session.clone()
-            }
-        };
+                // TODO: The cache has this chat. What should you do?
+                // Your code goes here.
+                let history = chat_session.session().unwrap().history();
+                let output: Vec<String> = history.iter().filter_map(|message| {
+                    match message.role() {
+                        MessageType::UserMessage => Some(message.content().to_string()),
+                        MessageType::ModelAnswer => Some(message.content().to_string()),
+                        MessageType::SystemPrompt => None,
+                    }
+                }).collect();
 
-        self.cache.insert_chat(username.clone(), chat_session.clone());
-
-        chat_session.session().unwrap().history().iter().filter_map(|message| {
-            match message.role() {
-                MessageType::UserMessage => Some(message.content().to_string()),
-                MessageType::ModelAnswer => Some(message.content().to_string()),
-                MessageType::SystemPrompt => None,
+                return output;
             }
-        }).collect()
+        }
     }
 }
 
