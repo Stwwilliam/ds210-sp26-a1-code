@@ -36,8 +36,8 @@ impl<V> Cache<V> {
             if self.usage_history.is_empty() {
                 return
             };
-                let oldest = self.usage_history.remove(0);
-                self.hashmap.remove(&oldest);
+            let oldest = self.usage_history.remove(0);
+            self.hashmap.remove(&oldest);
             
         
         // println!("Removing least recently used");
@@ -45,6 +45,18 @@ impl<V> Cache<V> {
     fn mark_as_most_recently_used(&mut self, username: String) {
         // TODO: your code goes here.
         // println!("Marking {username} as most recently used");
+
+        let most_recent = self.usage_history.iter().position(|user| user == &username);
+
+        match most_recent {
+            None => {
+                self.usage_history.push(username);
+            },
+            Some(x) => {
+                self.usage_history.remove(x);
+                self.usage_history.push(username);
+            }
+        }
     }
 
     // Reading from the cache:
