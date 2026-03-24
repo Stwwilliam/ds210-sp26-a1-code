@@ -25,13 +25,55 @@ impl ChatbotV5 {
             None => {
                 println!("chat_with_user: {username} is not in the cache!");
                 // The cache does not have the chat. What should you do?
-                return String::from("Hello, I am not a bot (yet)!");
+                // return String::from("Hello, I am not a bot (yet)!");
+
+                let mut chat_session = self.model
+                    .chat()
+                    .with_system_prompt("The assistant will act like a pirate");
+
+                let session = file_library::load_chat_session_from_file(&filename);
+
+                match session {
+                    None => {
+                        
+                    },
+                    Some(x) => {
+                        chat_session = chat_session.with_session(x);
+                    }
+                }
+
+                let output = chat_session.add_message(&message).await;
+
+                let session = chat_session.session().unwrap();
+                file_library::save_chat_session_to_file(filename, &session);
+
+                match output {
+                    Err(why) => {
+                        panic!("{:?}", why);
+                    },
+                    Ok(msg) => {
+                        return msg;
+                    }
+                }
             }
             Some(chat_session) => {
                 println!("chat_with_user: {username} is in the cache! Nice!");
                 // The cache has this chat. What should you do?
-                return String::from("Hello, I am not a bot (yet)!");
+                // return String::from("Hello, I am not a bot (yet)!");
+                
+                let output = chat_session.add_message(&message).await;
 
+                let session = chat_session.session().unwrap();
+                file_library::save_chat_session_to_file(filename, &session);
+
+                match output {
+                    Err(why) => {
+                        panic!("{:?}", why);
+                    },
+                    Ok(msg) => {
+                        return msg;
+                    }
+                }
             }
         }
     }
