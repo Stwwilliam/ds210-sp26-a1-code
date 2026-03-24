@@ -45,7 +45,7 @@ impl ChatbotV5 {
         self.cache.insert_chat(username.clone(), chat_session.clone());
 
         let session = chat_session.session().unwrap().clone();
-        file_library::save_chat_session_to_file(&username, &session);
+        file_library::save_chat_session_to_file(&filename, &session);
 
         return output.unwrap();
     }
