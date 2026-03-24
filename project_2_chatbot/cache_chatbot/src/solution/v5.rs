@@ -59,7 +59,7 @@ impl ChatbotV5 {
                 println!("get_history: {username} is not in the cache!");
                 // TODO: The cache does not have the chat. What should you do?
                 // Your code goes here.
-                let mut chat_session = match file_library::load_chat_session_from_file(&filename) {
+                let chat_session = match file_library::load_chat_session_from_file(&filename) {
                     Some(session) => self.model.chat().with_session(session),
                     None => self.model.chat().with_system_prompt("The assistant will act like a pirate"),
                 };
