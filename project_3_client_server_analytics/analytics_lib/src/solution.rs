@@ -44,8 +44,25 @@ fn check_conditions(dataset: &Dataset, filter: &Condition, row: &Row) -> bool {
 
 // student 1
 pub fn group_by_dataset(dataset: Dataset, group_by_column: &String) -> HashMap<Value, Dataset> {
-    todo!("Implement this!");
-}
+    let col_index = dataset.column_index(group_by_column);
+    let mut map: HashMap<Value, Dataset> = HashMap::new();
+    for row in dataset.iter(){
+        let key = row.get_value(col_index).clone();
+        match map.get_mut(&key){
+            Some(value) => {
+                value.add_row(row.clone());
+            },
+            None => {
+                let mut new_dataset = Dataset::new(dataset.columns().clone());
+                new_dataset.add_row(row.clone());
+                map.insert(key.clone(), new_dataset);
+            }
+        };       
+        }
+        return map
+    }
+
+
 
 // student 2
 pub fn aggregate_dataset(dataset: HashMap<Value, Dataset>, aggregation: &Aggregation) -> HashMap<Value, Value> {
