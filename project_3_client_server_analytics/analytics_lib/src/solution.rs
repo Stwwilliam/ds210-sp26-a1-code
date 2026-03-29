@@ -66,7 +66,56 @@ pub fn group_by_dataset(dataset: Dataset, group_by_column: &String) -> HashMap<V
 
 // student 2
 pub fn aggregate_dataset(dataset: HashMap<Value, Dataset>, aggregation: &Aggregation) -> HashMap<Value, Value> {
-    todo!("Implement this!");
+    let mut output: HashMap<Value, Value>  = HashMap::new();
+
+    // dataset looks like this:
+
+    // HashMap containing {
+    //     Value, Dataset
+    //     "A1": [{Bob,  	A1,   	90}],
+    //     "B1": [{Corinn,	B1,  	90}]
+    // }
+
+    match aggregation {
+        Aggregation::Count(_string) => {
+            for (val, data) in dataset {
+                let count = data.len() as i32;
+                output.insert(val, Value::Integer(count));
+            }
+        },
+        Aggregation::Sum(string) => {
+            for (val, data) in dataset {
+                let mut sum = 0;
+                let col_index = data.column_index(string);
+
+                for row in data.iter() {
+                    if let Value::Integer(some_val) = row.get_value(col_index) {
+                        sum += some_val;
+                    }
+                }
+
+                output.insert(val, Value::Integer(sum));
+            }
+        },
+        Aggregation::Average(string) => {
+            for (val, data) in dataset {
+                let mut total = 0;
+                let mut n = 0;
+                let col_index = data.column_index(string);
+
+                for row in data.iter() {
+                    if let Value::Integer(some_val) = row.get_value(col_index) {
+                        total += some_val;
+                        n += 1;
+                    }
+                }
+
+                output.insert(val, Value::Integer(total/n));
+            }
+        }
+    }
+    
+    return output;
 }
 
 pub fn compute_query_on_dataset(dataset: &Dataset, query: &Query) -> Dataset {
