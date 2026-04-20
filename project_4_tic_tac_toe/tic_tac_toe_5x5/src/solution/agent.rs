@@ -12,24 +12,22 @@ impl SolutionAgent {
             let score = board.score();
             return (score, 0, 0);
 
-
         } else if depth == max_depth {
             let score = SolutionAgent::heruistic(board);
             return (score, 0, 0);
-
 
         } else {
             let possibilities = board.moves();
             if player == Player::X{
                 let mut win = -2;
                 let mut position = possibilities[0];
-                for i in 0..possibilities.len(){
-                    let mut diff_board = board.clone();
-                    diff_board.apply_move(possibilities[i], player);
-                    let (score, _, _) = SolutionAgent::solve(&mut diff_board, Player::O, _time_limit);
+                for moves in possibilities{
+                    board.apply_move(moves, player);
+                    let (score, _, _) = SolutionAgent::minimax(board, Player::O, _time_limit, depth + 1, max_depth);
+                    board.undo_move(moves, player);
                     if score > win {
                         win = score;
-                        position = possibilities[i];
+                        position = moves;
                     }
                 }    
                 return (win, position.0, position.1);
@@ -37,13 +35,13 @@ impl SolutionAgent {
             else {
                 let mut win = 2;
                 let mut position = possibilities[0];
-                for i in 0..possibilities.len() {
-                    let mut diff_board = board.clone();
-                    diff_board.apply_move(possibilities[i], player);
-                    let (score, _, _) = SolutionAgent::solve(&mut diff_board, Player::O, _time_limit);
+                for moves in possibilities {
+                    board.apply_move(moves, player);
+                    let (score, _, _) = SolutionAgent::minimax(board, Player::X, _time_limit,depth + 1, max_depth);
+                    board.undo_move(moves, player);
                     if score < win {
                         win = score;
-                        position = possibilities[i];
+                        position = moves;
                     }
                 }
                 return (win, position.0,position.1);
@@ -145,8 +143,6 @@ impl SolutionAgent {
     }
 }
 
-
-
 // Put your solution here.
 impl Agent for SolutionAgent {
     // Should returns (<score>, <x>, <y>)
@@ -155,7 +151,6 @@ impl Agent for SolutionAgent {
     fn solve(board: &mut Board, player: Player, _time_limit: u64) -> (i32, usize, usize) {
         let move_count = board.moves().len();
         let depth_limit: usize;
-
 
         //if move_count < 10 {
         //  depth_limit = move_count;
@@ -170,7 +165,6 @@ impl Agent for SolutionAgent {
         } else {
             depth_limit = move_count;
         };
-
 
         SolutionAgent::minimax(board, player, _time_limit, 0, depth_limit)
     }
