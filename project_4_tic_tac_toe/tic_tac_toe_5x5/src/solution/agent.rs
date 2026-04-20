@@ -1,3 +1,4 @@
+use tic_tac_toe_stencil::board::Cell;
 use tic_tac_toe_stencil::agents::Agent;
 use tic_tac_toe_stencil::board::Board;
 use tic_tac_toe_stencil::player::Player;
@@ -48,6 +49,99 @@ impl SolutionAgent {
                 return (win, position.0,position.1);
             }
         }
+    }
+
+    fn heruistic(board: &Board) -> i32 {
+        let cells = board.get_cells();
+        let n = cells.len();
+        let mut score = 0;
+
+        //rows
+        for row in 0..n {
+            for i in 0..3 {
+                if cells[row][i] == cells[row][i + 1] && cells[row][i + 1] == cells[row][i + 2] {
+               
+                    if cells[row][i] == Cell::X {
+                        score += 1;
+                    }
+                    else if cells[row][0] == Cell::O{
+                        score -= 1;
+                    }
+                }
+            }
+        }
+
+        //columns
+        for col in 0..n {
+            for i in 0..3 {
+                if cells[i][col] == cells[i + 1][col] && cells[i + 1][col] == cells[i + 2][col] {
+               
+                    if cells[i][col] == Cell::X {
+                        score += 1;
+                    }
+                    else if cells[i][col] == Cell::O{
+                        score -= 1;
+                    }
+                }
+            }
+        }
+
+        //diagonal \
+        for row in 0..n-2 {
+            for col in 0..n-2 {
+                //0, 0 and 1, 1 and 2, 2
+                //0, 1 and 1, 2 and 2, 3
+                //0, 2 and 1, 3 and 2, 4
+
+
+                //1, 0 and 2, 1 and 3, 2
+                //1, 1 and 2, 2 and 3, 3
+                //1, 2 and 2, 3 and 3, 4
+
+
+                //2, 0 and 3, 1 and 4, 2
+                //2, 1 and 3, 2 and 4, 3
+                //2, 2 and 3, 3 and 4, 4
+                if cells[row][col] == cells[row + 1][col + 1] && cells[row + 1][col + 1] == cells[row + 2][col + 2] {
+               
+                    if cells[row][col] == Cell::X {
+                        score += 1;
+                    }
+                    else if cells[row][col] == Cell::O{
+                        score -= 1;
+                    }
+                }
+            }
+        }
+
+        //diagonal /
+        for row in 2..n {
+            for col in 0..n-2 {
+                //2, 0 and 1, 1 and 0, 2
+                //2, 1 and 1, 2 and 0, 3
+                //2, 2 and 1, 3 and 0, 4
+
+
+                //3, 0 and 2, 1 and 1, 2
+                //3, 1 and 2, 2 and 1, 3
+                //3, 2 and 2, 3 and 1, 4
+
+
+                //4, 0 and 3, 1 and 2, 2
+                //4, 1 and 3, 2 and 2, 3
+                //4, 2 and 3, 3 and 2, 4
+                if cells[row][col] == cells[row - 1][col + 1] && cells[row - 1][col + 1] == cells[row - 2][col + 2] {
+               
+                    if cells[row][col] == Cell::X {
+                        score += 1;
+                    }
+                    else if cells[row][col] == Cell::O{
+                        score -= 1;
+                    }
+                }
+            }
+        }
+        return score;
     }
 }
 
