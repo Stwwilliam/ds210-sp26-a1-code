@@ -7,7 +7,8 @@ use tic_tac_toe_stencil::player::Player;
 pub struct SolutionAgent {}
 
 impl SolutionAgent {
-    fn minimax(board: &mut Board, player: Player, _time_limit: u64, depth: usize, max_depth: usize) -> (i32, usize, usize) {
+    //https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
+    fn minimax(board: &mut Board, player: Player, _time_limit: u64, depth: usize, max_depth: usize, mut alpha: i32, mut beta: i32) -> (i32, usize, usize) {
         if board.game_over() {
             let score = board.score();
             return (score, 0, 0);
@@ -19,29 +20,37 @@ impl SolutionAgent {
         } else {
             let possibilities = board.moves();
             if player == Player::X{
-                let mut win = -2;
+                let mut win = i32::MIN;
                 let mut position = possibilities[0];
                 for moves in possibilities{
                     board.apply_move(moves, player);
-                    let (score, _, _) = SolutionAgent::minimax(board, Player::O, _time_limit, depth + 1, max_depth);
+                    let (score, _, _) = SolutionAgent::minimax(board, Player::O, _time_limit, depth + 1, max_depth, alpha, beta);
                     board.undo_move(moves, player);
                     if score > win {
                         win = score;
                         position = moves;
                     }
+                    alpha = alpha.max(win);
+                    if alpha >= beta { 
+                        break; 
+                    }
                 }    
                 return (win, position.0, position.1);
             }
             else {
-                let mut win = 2;
+                let mut win = i32::MAX;
                 let mut position = possibilities[0];
                 for moves in possibilities {
                     board.apply_move(moves, player);
-                    let (score, _, _) = SolutionAgent::minimax(board, Player::X, _time_limit,depth + 1, max_depth);
+                    let (score, _, _) = SolutionAgent::minimax(board, Player::X, _time_limit,depth + 1, max_depth, alpha, beta);
                     board.undo_move(moves, player);
                     if score < win {
                         win = score;
                         position = moves;
+                    }
+                    beta = beta.min(win);
+                    if alpha >= beta { 
+                        break; 
                     }
                 }
                 return (win, position.0,position.1);
@@ -144,14 +153,8 @@ impl Agent for SolutionAgent {
     fn solve(board: &mut Board, player: Player, _time_limit: u64) -> (i32, usize, usize) {
         let move_count = board.moves().len();
         let depth_limit: usize;
-
-        //if move_count < 10 {
-        //  depth_limit = move_count;
-        //} else {
-        //  depth_limit = 4;
-        //}
        
-        if move_count > 15 {
+        if move_count > 20 {
             depth_limit = 4;
         } else if move_count > 10 {
             depth_limit = 6;
@@ -159,6 +162,6 @@ impl Agent for SolutionAgent {
             depth_limit = move_count;
         };
 
-        SolutionAgent::minimax(board, player, _time_limit, 0, depth_limit)
+        SolutionAgent::minimax(board, player, _time_limit, 0, depth_limit, i32::MIN, i32::MAX)
     }
 }
