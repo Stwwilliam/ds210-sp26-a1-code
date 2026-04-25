@@ -62,87 +62,95 @@ impl SolutionAgent {
         let cells = board.get_cells();
         let n = cells.len();
         let mut score = 0;
-
+        //row
         for i in 0..n {
-            for j in 0..3 {
+            for j in 0..n-2 {
+                score += Self::score_triple(
+                    cells[i][j].clone(), 
+                    cells[i][j+1].clone(), 
+                    cells[i][j+2].clone(),
+                );
+            }
+        }
 
-                //rows
-                if cells[i][j] == cells[i][j + 1] && cells[i][j + 1] == cells[i][j + 2] {
-               
-                    if cells[i][j] == Cell::X {
-                        score += 1;
-                    }
-                    else if cells[i][j] == Cell::O{
-                        score -= 1;
-                    }
-                }
-
-                //columns
-                if cells[j][i] == cells[j + 1][i] && cells[j + 1][i] == cells[j + 2][i] {
-               
-                    if cells[j][i] == Cell::X {
-                        score += 1;
-                    }
-                    else if cells[j][i] == Cell::O{
-                        score -= 1;
-                    }
-                }
+        //column
+        for i in 0..n {
+            for j in 0..n-2 {
+                score += Self::score_triple(
+                    cells[j][i].clone(), 
+                    cells[j+1][i].clone(), 
+                    cells[j+2][i].clone(),
+                );
             }
         }
 
         //diagonal \
-        for row in 0..n-2 {
-            for col in 0..n-2 {
-                //0, 0 and 1, 1 and 2, 2
-                //0, 1 and 1, 2 and 2, 3
-                //0, 2 and 1, 3 and 2, 4
-
-                //1, 0 and 2, 1 and 3, 2
-                //1, 1 and 2, 2 and 3, 3
-                //1, 2 and 2, 3 and 3, 4
-
-                //2, 0 and 3, 1 and 4, 2
-                //2, 1 and 3, 2 and 4, 3
-                //2, 2 and 3, 3 and 4, 4
-                if cells[row][col] == cells[row + 1][col + 1] && cells[row + 1][col + 1] == cells[row + 2][col + 2] {
-               
-                    if cells[row][col] == Cell::X {
-                        score += 1;
-                    }
-                    else if cells[row][col] == Cell::O{
-                        score -= 1;
-                    }
-                }
+        for i in 0..n-2 {
+            for j in 0..n-2 {
+                score += Self::score_triple(
+                    cells[i][j].clone(),
+                    cells[i+1][j+1].clone(),
+                    cells[i+2][j+2].clone(),
+                );
             }
         }
 
         //diagonal /
-        for row in 2..n {
-            for col in 0..n-2 {
-                //2, 0 and 1, 1 and 0, 2
-                //2, 1 and 1, 2 and 0, 3
-                //2, 2 and 1, 3 and 0, 4
-
-                //3, 0 and 2, 1 and 1, 2
-                //3, 1 and 2, 2 and 1, 3
-                //3, 2 and 2, 3 and 1, 4
-
-                //4, 0 and 3, 1 and 2, 2
-                //4, 1 and 3, 2 and 2, 3
-                //4, 2 and 3, 3 and 2, 4
-                if cells[row][col] == cells[row - 1][col + 1] && cells[row - 1][col + 1] == cells[row - 2][col + 2] {
-               
-                    if cells[row][col] == Cell::X {
-                        score += 1;
-                    }
-                    else if cells[row][col] == Cell::O{
-                        score -= 1;
-                    }
-                }
+        for i in 2..n {
+            for j in 0..n-2 {
+                score += Self::score_triple(
+                    cells[i][j].clone(),
+                    cells[i-1][j+1].clone(),
+                    cells[i-2][j+2].clone(),
+                );
             }
         }
         return score;
     }
+
+    //helper function used in heruistic
+    fn score_triple(a: Cell, b:Cell, c:Cell)->i32{
+        let mut x = 0;
+        let mut o = 0;
+        let mut empty = 0;
+
+        for cell in [a, b, c] {
+            match cell {
+                Cell::X => x += 1,
+                Cell::O => o += 1,
+                Cell::Empty => empty += 1,
+                Cell::Wall => {}
+            }
+        }
+        //both
+        if x > 0 && o > 0 {
+            return 0;
+        }
+        //just x
+        else if x == 3 {
+            return 100;
+        }
+        else if x == 2 && empty == 1 {
+            return 5;
+        }
+        else if x == 1 && empty == 2 {
+            return 1;
+        }
+        //just o
+        else if o == 3 {
+            return -100;
+        }
+        else if o == 2 && empty == 1 {
+            return -5;
+        }
+        else if o == 1 && empty == 2 {
+            return -1;
+        }
+        return 0
+    }
+
+
+
 }
 
 // Put your solution here.
