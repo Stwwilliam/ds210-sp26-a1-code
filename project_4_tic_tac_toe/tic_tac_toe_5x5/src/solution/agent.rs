@@ -65,22 +65,19 @@ impl SolutionAgent {
         //row
         for i in 0..n {
             for j in 0..n-2 {
+                //row
                 score += Self::score_triple(
-                    cells[i][j].clone(), 
-                    cells[i][j+1].clone(), 
-                    cells[i][j+2].clone(),
+                    &cells[i][j], 
+                    &cells[i][j+1], 
+                    &cells[i][j+2],
                 );
-            }
-        }
+                //column
+                score += Self::score_triple(
+                    &cells[j][i], 
+                    &cells[j+1][i], 
+                    &cells[j+2][i],
+                );
 
-        //column
-        for i in 0..n {
-            for j in 0..n-2 {
-                score += Self::score_triple(
-                    cells[j][i].clone(), 
-                    cells[j+1][i].clone(), 
-                    cells[j+2][i].clone(),
-                );
             }
         }
 
@@ -88,9 +85,9 @@ impl SolutionAgent {
         for i in 0..n-2 {
             for j in 0..n-2 {
                 score += Self::score_triple(
-                    cells[i][j].clone(),
-                    cells[i+1][j+1].clone(),
-                    cells[i+2][j+2].clone(),
+                    &cells[i][j],
+                    &cells[i+1][j+1],
+                    &cells[i+2][j+2],
                 );
             }
         }
@@ -99,9 +96,9 @@ impl SolutionAgent {
         for i in 2..n {
             for j in 0..n-2 {
                 score += Self::score_triple(
-                    cells[i][j].clone(),
-                    cells[i-1][j+1].clone(),
-                    cells[i-2][j+2].clone(),
+                    &cells[i][j],
+                    &cells[i-1][j+1],
+                    &cells[i-2][j+2],
                 );
             }
         }
@@ -109,46 +106,32 @@ impl SolutionAgent {
     }
 
     //helper function used in heruistic
-    fn score_triple(a: Cell, b:Cell, c:Cell)->i32{
+    fn score_triple(a: &Cell, b: &Cell, c: &Cell) -> i32 {
         let mut x = 0;
         let mut o = 0;
-        let mut empty = 0;
 
         for cell in [a, b, c] {
             match cell {
                 Cell::X => x += 1,
                 Cell::O => o += 1,
-                Cell::Empty => empty += 1,
-                Cell::Wall => {}
+                _ => {}
+            }
+
+            if x > 0 && o > 0 {
+                return 0;
             }
         }
-        //both
-        if x > 0 && o > 0 {
-            return 0;
-        }
-        //just x
-        else if x == 3 {
-            return 100;
-        }
-        else if x == 2 && empty == 1 {
-            return 5;
-        }
-        else if x == 1 && empty == 2 {
-            return 1;
-        }
-        //just o
-        else if o == 3 {
-            return -100;
-        }
-        else if o == 2 && empty == 1 {
-            return -5;
-        }
-        else if o == 1 && empty == 2 {
-            return -1;
-        }
-        return 0
-    }
 
+        match (x, o) {
+            (3, 0) => 100,
+            (2, 0) => 5,
+            (1, 0) => 1,
+            (0, 3) => -100,
+            (0, 2) => -5,
+            (0, 1) => -1,
+            _ => 0,
+        }
+    }
 
 
 }
@@ -162,10 +145,10 @@ impl Agent for SolutionAgent {
         let move_count = board.moves().len();
         let depth_limit: usize;
        
-        if move_count > 20 {
-            depth_limit = 4;
+        if move_count > 18 {
+            depth_limit = 3;
         } else if move_count > 10 {
-            depth_limit = 6;
+            depth_limit = 4;
         } else {
             depth_limit = move_count;
         };
